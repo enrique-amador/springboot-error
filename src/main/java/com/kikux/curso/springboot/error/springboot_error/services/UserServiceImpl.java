@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService{
     private List<User> users;
 
     public UserServiceImpl() {
-        this.users = ArrayList<>();
+        this.users = new ArrayList<>();
         users.add(new User(1L, "Enrique", "Amador"));
         users.add(new User(2L, "Juan", "Aristizabal"));
         users.add(new User(3L, "David", "Fuentes"));
