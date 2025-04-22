@@ -1,21 +1,23 @@
 package com.kikux.curso.springboot.error.springboot_error.controllers;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kikux.curso.springboot.error.springboot_error.exceptions.UserNotFoundException;
 import com.kikux.curso.springboot.error.springboot_error.models.domain.User;
-import com.kikux.curso.springboot.error.springboot_error.services.UserServiceImpl;
+import com.kikux.curso.springboot.error.springboot_error.services.UserService;
 
 @RestController
 @RequestMapping("/app")
 public class AppController {
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService userService;
 
     @GetMapping
     public String index() {
@@ -26,14 +28,27 @@ public class AppController {
     }
 
     @GetMapping("/show/{id}")
-    public User show(@PathVariable(name="id") Long id) {
-        // UserServiceImpl user = new UserServiceImpl(); //DO NOT: here we depend on implementation
-        User user = userServiceImpl.findById(id).orElseThrow(() -> new UserNotFoundException("Error el usuario no existe!"));
+    public ResponseEntity<?> show(@PathVariable(name="id") Long id) {
+    // public User show(@PathVariable(name="id") Long id) {
+        //OPTION1 
+        // User user = userServiceImpl.findById(id);
         // if (user == null) {
         //     throw new UserNotFoundException("Error el usuario no existe!");
         // }
-        // System.out.println(user.getLastName());
-        return user;
+        // return userServiceImpl.findById(id);
+
+        //OPTION 2
+        // User user = userServiceImpl.findById(id).orElseThrow(() -> new UserNotFoundException("Error el usuario no existe!"));
+        // return user;
+
+        //OPTION 3
+        Optional<User> userOptional = userService.findById(id);
+
+        if(userOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+            //this is not caught by HandlerExceptioncontroller due to this is not an exception
+        }
+        return ResponseEntity.ok(userOptional.get());
     }
 
 }
