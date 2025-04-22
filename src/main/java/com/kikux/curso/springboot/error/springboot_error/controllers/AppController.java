@@ -1,14 +1,12 @@
 package com.kikux.curso.springboot.error.springboot_error.controllers;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kikux.curso.springboot.error.springboot_error.exceptions.UserNotFoundException;
 import com.kikux.curso.springboot.error.springboot_error.models.domain.User;
 import com.kikux.curso.springboot.error.springboot_error.services.UserService;
 
@@ -28,8 +26,8 @@ public class AppController {
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> show(@PathVariable(name="id") Long id) {
-    // public User show(@PathVariable(name="id") Long id) {
+    // public ResponseEntity<?> show(@PathVariable(name="id") Long id) {
+    public User show(@PathVariable(name="id") Long id) {
         //OPTION1 
         // User user = userServiceImpl.findById(id);
         // if (user == null) {
@@ -38,17 +36,17 @@ public class AppController {
         // return userServiceImpl.findById(id);
 
         //OPTION 2
-        // User user = userServiceImpl.findById(id).orElseThrow(() -> new UserNotFoundException("Error el usuario no existe!"));
-        // return user;
+        User user = userService.findById(id).orElseThrow(() -> new UserNotFoundException("Error el usuario no existe!"));
+        return user;
 
         //OPTION 3
-        Optional<User> userOptional = userService.findById(id);
+        // Optional<User> userOptional = userService.findById(id);
 
-        if(userOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-            //this is not caught by HandlerExceptioncontroller due to this is not an exception
-        }
-        return ResponseEntity.ok(userOptional.get());
+        // if(userOptional.isEmpty()) {
+        //     return ResponseEntity.notFound().build();
+        //     //this is not caught by HandlerExceptioncontroller due to this is not an exception
+        // }
+        // return ResponseEntity.ok(userOptional.get());
     }
 
 }
